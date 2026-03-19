@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 const paymentController = require('../controllers/paymentController');
 
+// Listar planos VIP disponíveis
+router.get('/plans', paymentController.listPlans);
+
 // Criar preferência de pagamento
 router.post('/create-preference', paymentController.createPaymentPreference);
 
