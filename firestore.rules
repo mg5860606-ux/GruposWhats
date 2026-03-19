@@ -1,0 +1,32 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Grupos aprovados - Leitura pública, escrita apenas pelo backend
+    match /grupos/{groupId} {
+      allow read: if true;
+      allow write: if false; // Apenas backend via Admin SDK
+    }
+    
+    // Grupos pendentes - Apenas backend
+    match /gruposPendentes/{groupId} {
+      allow read, write: if false; // Apenas backend via Admin SDK
+    }
+    
+    // Cupons - Apenas backend
+    match /cupons/{couponId} {
+      allow read, write: if false; // Apenas backend via Admin SDK
+    }
+    
+    // Pagamentos pendentes - Apenas backend
+    match /pagamentosPendentes/{paymentId} {
+      allow read, write: if false; // Apenas backend via Admin SDK
+    }
+    
+    // Histórico de pagamentos - Apenas backend
+    match /pagamentosHistorico/{paymentId} {
+      allow read, write: if false; // Apenas backend via Admin SDK
+    }
+  }
+}
