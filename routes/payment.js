@@ -5,7 +5,12 @@ const paymentController = require('../controllers/paymentController');
 // Listar planos VIP disponíveis
 router.get('/plans', paymentController.listPlans);
 
-// Criar preferência de pagamento
+// CHECKOUT TRANSPARENTE (novo)
+router.post('/create-pix', paymentController.createPixPayment);
+router.post('/create-card', paymentController.createCardPayment);
+router.get('/status/:paymentId', paymentController.checkPaymentStatus);
+
+// CHECKOUT PRO (antigo - manter por compatibilidade)
 router.post('/create-preference', paymentController.createPaymentPreference);
 
 // Webhook do Mercado Pago

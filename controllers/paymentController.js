@@ -10,9 +10,10 @@ const paymentClient = new Payment(client);
 
 // Tabela de preços dos planos (BACKEND - fonte de verdade)
 const PLANOS_VIP = {
-  12: { horas: 12, preco: 19.90, nome: 'VIP 12 Horas' },
-  24: { horas: 24, preco: 29.90, nome: 'VIP 24 Horas' },
-  48: { horas: 48, preco: 49.90, nome: 'VIP 48 Horas' }
+  12: { horas: 12, preco: 9.90, nome: '12 Horas', descricao: 'Padrão' },
+  24: { horas: 24, preco: 19.80, nome: '24 Horas', descricao: 'Dobro' },
+  72: { horas: 72, preco: 59.40, nome: '3 Dias', descricao: 'Fim de Semana' },
+  168: { horas: 168, preco: 138.60, nome: '7 Dias', descricao: 'Semana Completa' }
 };
 
 /**
@@ -24,7 +25,7 @@ exports.listPlans = async (req, res) => {
       horas: plano.horas,
       nome: plano.nome,
       preco: plano.preco,
-      descricao: `Destaque VIP por ${plano.horas} horas`
+      descricao: plano.descricao || `Destaque VIP por ${plano.horas} horas`
     }));
 
     res.json({ 
@@ -36,6 +37,344 @@ exports.listPlans = async (req, res) => {
     res.status(500).json({ 
       success: false, 
       error: 'Erro ao listar planos' 
+    });
+  }
+};
+
+/**
+ * Criar pagamento PIX (Checkout Transparente)
+ * Gera QR Code para pagamento no próprio site
+ */
+exports.createPixPayment = async (req, res) => {
+  try {
+    const { 
+      groupId, 
+      planoHoras,
+      nome, 
+      cpf, 
+      email,
+      codigoCupom
+    } = req.body;
+
+    // Validação
+    if (!groupId || !planoHoras || !nome || !cpf || !email) {
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Dados incompletos' 
+      });
+    }
+
+    // Buscar plano e calcular preço
+    const plano = PLANOS_VIP[parseInt(planoHoras)];
+    if (!plano) {
+      return res.status(400).json({ 
+        success: false, 
+        error: 'Plano inválido' 
+      });
+    }
+
+    // Buscar grupo
+    const groupDoc = await db.collection('grupos').doc(groupId).get();
+    if (!groupDoc.exists) {
+      return res.status(404).json({ 
+        success: false, 
+        error: 'Grupo não encontrado' 
+      });
+    }
+
+    const grupoData = groupDoc.data();
+    let precoOriginal = plano.preco;
+    let precoFinal = precoOriginal;
+    let cupomData = null;
+    let cupomId = null;
+
+    // Validar cupom
+    if (codigoCupom) {
+      const cupomSnapshot = await db.collection('cupons')
+        .where('codigo', '==', codigoCupom.toUpperCase().trim())
+        .where('ativo', '==', true)
+        .limit(1)
+        .get();
+      
+      if (!cupomSnapshot.empty) {
+        const cupomDoc = cupomSnapshot.docs[0];
+        const cupom = cupomDoc.data();
+        
+        const cupomValido = (!cupom.dataValidade || cupom.dataValidade > Date.now()) &&
+                           (!cupom.limite || cupom.usos < cupom.limite);
+        
+        if (cupomValido) {
+          cupomId = cupomDoc.id;
+          
+          if (cupom.tipo === 'percentual') {
+            const desconto = (precoOriginal * cupom.desconto) / 100;
+            precoFinal = precoOriginal - desconto;
+          } else if (cupom.tipo === 'valor') {
+            precoFinal = precoOriginal - cupom.desconto;
+          }
+          
+          precoFinal = Math.max(precoFinal, 0.50);
+          
+          cupomData = {
+            id: cupomId,
+            codigo: cupom.codigo,
+            desconto: cupom.desconto,
+            tipo: cupom.tipo,
+            descontoAplicado: precoOriginal - precoFinal
+          };
+          
+          console.log(`✅ Cupom ${cupom.codigo} aplicado no PIX`);
+        }
+      }
+    }
+
+    // Criar pagamento PIX via Payment API
+    const paymentData = {
+      transaction_amount: parseFloat(precoFinal.toFixed(2)),
+      description: `${plano.nome} - ${grupoData.nome}`,
+      payment_method_id: 'pix',
+      payer: {
+        email: email,
+        first_name: nome.split(' ')[0],
+        last_name: nome.split(' ').slice(1).join(' ') || nome.split(' ')[0],
+        identification: {
+          type: 'CPF',
+          number: cpf.replace(/\D/g, '')
+        }
+      },
+      notification_url: `${process.env.BASE_URL}/api/payment/webhook`,
+      external_reference: groupId
+    };
+
+    const payment = await paymentClient.create({ body: paymentData });
+
+    // Salvar pagamento pendente
+    await db.collection('pagamentosPendentes').add({
+      grupoId: groupId,
+      grupoNome: grupoData.nome,
+      paymentId: payment.id,
+      nome,
+      cpf,
+      email,
+      plano: plano.nome,
+      planoHoras: plano.horas,
+      valorOriginal: precoOriginal,
+      valorFinal: precoFinal,
+      cupom: cupomData,
+      cupomId: cupomId,
+      hours: plano.horas,
+      metodoPagamento: 'pix',
+      status: 'pending',
+      dataCriacao: Date.now(),
+      pixData: {
+        qrCode: payment.point_of_interaction?.transaction_data?.qr_code,
+        qrCodeBase64: payment.point_of_interaction?.transaction_data?.qr_code_base64,
+        ticketUrl: payment.point_of_interaction?.transaction_data?.ticket_url
+      }
+    });
+
+    console.log(`💰 PIX gerado: Grupo ${groupId} - ${plano.nome} - R$ ${precoFinal.toFixed(2)}`);
+
+    res.json({
+      success: true,
+      paymentId: payment.id,
+      status: payment.status,
+      qrCode: payment.point_of_interaction?.transaction_data?.qr_code,
+      qrCodeBase64: payment.point_of_interaction?.transaction_data?.qr_code_base64,
+      ticketUrl: payment.point_of_interaction?.transaction_data?.ticket_url,
+      valorOriginal: precoOriginal,
+      valorFinal: precoFinal,
+      cupomAplicado: cupomData !== null,
+      economia: cupomData ? cupomData.descontoAplicado : 0
+    });
+
+  } catch (error) {
+    console.error('❌ Erro ao criar pagamento PIX:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: error.message || 'Erro ao gerar PIX' 
+    });
+  }
+};
+
+/**
+ * Criar pagamento com Cartão (Checkout Transparente)
+ * Processa cartão no próprio site
+ */
+exports.createCardPayment = async (req, res) => {
+  try {
+    const {
+      groupId,
+      planoHoras,
+      nome,
+      cpf,
+      email,
+      token,  // Token do cartão (gerado no frontend via MP.js)
+      codigoCupom,
+      installments,  // Parcelas
+      issuerId  // Emissor do cartão
+    } = req.body;
+
+    // Validação
+    if (!groupId || !planoHoras || !nome || !cpf || !email || !token) {
+      return res.status(400).json({
+        success: false,
+        error: 'Dados incompletos'
+      });
+    }
+
+    // Buscar plano e calcular preço
+    const plano = PLANOS_VIP[parseInt(planoHoras)];
+    if (!plano) {
+      return res.status(400).json({
+        success: false,
+        error: 'Plano inválido'
+      });
+    }
+
+    // Buscar grupo
+    const groupDoc = await db.collection('grupos').doc(groupId).get();
+    if (!groupDoc.exists) {
+      return res.status(404).json({
+        success: false,
+        error: 'Grupo não encontrado'
+      });
+    }
+
+    const grupoData = groupDoc.data();
+    let precoOriginal = plano.preco;
+    let precoFinal = precoOriginal;
+    let cupomData = null;
+    let cupomId = null;
+
+    // Validar cupom
+    if (codigoCupom) {
+      const cupomSnapshot = await db.collection('cupons')
+        .where('codigo', '==', codigoCupom.toUpperCase().trim())
+        .where('ativo', '==', true)
+        .limit(1)
+        .get();
+
+      if (!cupomSnapshot.empty) {
+        const cupomDoc = cupomSnapshot.docs[0];
+        const cupom = cupomDoc.data();
+
+        const cupomValido = (!cupom.dataValidade || cupom.dataValidade > Date.now()) &&
+          (!cupom.limite || cupom.usos < cupom.limite);
+
+        if (cupomValido) {
+          cupomId = cupomDoc.id;
+
+          if (cupom.tipo === 'percentual') {
+            const desconto = (precoOriginal * cupom.desconto) / 100;
+            precoFinal = precoOriginal - desconto;
+          } else if (cupom.tipo === 'valor') {
+            precoFinal = precoOriginal - cupom.desconto;
+          }
+
+          precoFinal = Math.max(precoFinal, 0.50);
+
+          cupomData = {
+            id: cupomId,
+            codigo: cupom.codigo,
+            desconto: cupom.desconto,
+            tipo: cupom.tipo,
+            descontoAplicado: precoOriginal - precoFinal
+          };
+
+          console.log(`✅ Cupom ${cupom.codigo} aplicado no Cartão`);
+        }
+      }
+    }
+
+    // Criar pagamento com cartão via Payment API
+    const paymentData = {
+      transaction_amount: parseFloat(precoFinal.toFixed(2)),
+      token: token,
+      description: `${plano.nome} - ${grupoData.nome}`,
+      installments: parseInt(installments) || 1,
+      payment_method_id: 'visa',  // Será detectado automaticamente pelo token
+      issuer_id: issuerId || undefined,
+      payer: {
+        email: email,
+        first_name: nome.split(' ')[0],
+        last_name: nome.split(' ').slice(1).join(' ') || nome.split(' ')[0],
+        identification: {
+          type: 'CPF',
+          number: cpf.replace(/\D/g, '')
+        }
+      },
+      notification_url: `${process.env.BASE_URL}/api/payment/webhook`,
+      external_reference: groupId,
+      statement_descriptor: 'GRUPOSWHATS VIP'
+    };
+
+    const payment = await paymentClient.create({ body: paymentData });
+
+    // Salvar pagamento pendente
+    await db.collection('pagamentosPendentes').add({
+      grupoId: groupId,
+      grupoNome: grupoData.nome,
+      paymentId: payment.id,
+      nome,
+      cpf,
+      email,
+      plano: plano.nome,
+      planoHoras: plano.horas,
+      valorOriginal: precoOriginal,
+      valorFinal: precoFinal,
+      cupom: cupomData,
+      cupomId: cupomId,
+      hours: plano.horas,
+      metodoPagamento: 'credit_card',
+      parcelas: installments || 1,
+      status: payment.status,
+      dataCriacao: Date.now()
+    });
+
+    console.log(`💳 Cartão processado: Grupo ${groupId} - ${plano.nome} - Status: ${payment.status}`);
+
+    res.json({
+      success: true,
+      paymentId: payment.id,
+      status: payment.status,
+      statusDetail: payment.status_detail,
+      valorOriginal: precoOriginal,
+      valorFinal: precoFinal,
+      cupomAplicado: cupomData !== null,
+      economia: cupomData ? cupomData.descontoAplicado : 0
+    });
+
+  } catch (error) {
+    console.error('❌ Erro ao processar cartão:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message || 'Erro ao processar pagamento'
+    });
+  }
+};
+
+/**
+ * Verificar status de pagamento
+ * Usado para polling do status do PIX
+ */
+exports.checkPaymentStatus = async (req, res) => {
+  try {
+    const { paymentId } = req.params;
+
+    const payment = await paymentClient.get({ id: paymentId });
+
+    res.json({
+      success: true,
+      status: payment.status,
+      statusDetail: payment.status_detail
+    });
+
+  } catch (error) {
+    console.error('❌ Erro ao verificar status:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Erro ao verificar status'
     });
   }
 };
