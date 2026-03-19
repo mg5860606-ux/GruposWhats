@@ -7,6 +7,7 @@ const groupsRouter = require('./routes/groups');
 const paymentRouter = require('./routes/payment');
 const analyticsRouter = require('./routes/analytics');
 const couponsRouter = require('./routes/coupons');
+const couponOrdersRouter = require('./routes/couponOrders');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -24,6 +25,7 @@ app.use('/api/groups', groupsRouter);
 app.use('/api/payment', paymentRouter);
 app.use('/api/analytics', analyticsRouter);
 app.use('/api/coupons', couponsRouter);
+app.use('/api/coupon-orders', couponOrdersRouter);
 
 // Endpoint de teste para criar pagamento demo (apenas desenvolvimento)
 app.post('/api/test/create-payment-demo', async (req, res) => {

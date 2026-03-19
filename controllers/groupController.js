@@ -1,5 +1,6 @@
 const { db } = require('../config/firebase');
 const { v4: uuidv4 } = require('uuid');
+const emailController = require('./emailController');
 
 // Listar todos os grupos aprovados
 exports.getAllGroups = async (req, res) => {
@@ -27,7 +28,7 @@ exports.getAllGroups = async (req, res) => {
 // Criar novo grupo (pendente de aprovação)
 exports.createGroup = async (req, res) => {
   try {
-    const { nome, descricao, categoria, link, imagem, tags } = req.body;
+    const { nome, descricao, categoria, link, imagem, tags, proprietario, email } = req.body;
 
     if (!nome || !descricao || !categoria || !link || !imagem) {
       return res.status(400).json({ success: false, error: 'Campos obrigatórios faltando' });
@@ -44,6 +45,8 @@ exports.createGroup = async (req, res) => {
       link,
       imagem,
       tags: tags || [],
+      proprietario: proprietario || 'Não informado',
+      email: email || '',
       vip: false,
       vipExpira: null,
       dataCriacao: Date.now(),
@@ -52,6 +55,17 @@ exports.createGroup = async (req, res) => {
     };
 
     const docRef = await db.collection('gruposPendentes').add(novoGrupo);
+
+    // Enviar notificação por email para o admin
+    try {
+      await emailController.notifyAdminNewGroup({
+        ...novoGrupo,
+        id: docRef.id
+      });
+      console.log('✅ Email de notificação enviado para admin');
+    } catch (emailError) {
+      console.error('⚠️ Erro ao enviar email (grupo foi criado):', emailError);
+    }
 
     res.json({ 
       success: true, 

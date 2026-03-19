@@ -794,9 +794,45 @@ async function impulsionarGratis(groupId) {
 
 
 // ===== COMPRAR CUPONS =====
-function comprarCupom(tipo, quantidade, preco) {
-    showAlert(`🎫 Funcionalidade de compra de cupons em breve! Pacote: ${tipo.toUpperCase()} - ${quantidade} impulsionamentos por R$ ${preco.toFixed(2)}`, 'info');
-    // TODO: Integrar com sistema de pagamento
+async function comprarCupom(tipo, quantidade, preco) {
+    // Pedir dados do comprador
+    const nome = prompt('Seu nome completo:');
+    if (!nome) return;
+    
+    const email = prompt('Seu e-mail (receberá o cupom):');
+    if (!email) return;
+    
+    const telefone = prompt('Seu telefone (opcional):');
+    
+    try {
+        showAlert('Processando pedido...', 'info');
+        
+        const response = await fetch('/api/coupon-orders/create-order', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                tipo,
+                quantidade,
+                preco,
+                nome,
+                email,
+                telefone
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            showAlert(`✅ Pedido criado! Código: ${data.codigoCupom}\n\nAguarde a confirmação do pagamento. O cupom será enviado para seu email.`, 'success');
+            
+            // Aqui você pode integrar com Mercado Pago depois
+            console.log('Order ID:', data.orderId);
+        } else {
+            showAlert('Erro ao criar pedido: ' + data.error, 'error');
+        }
+    } catch (error) {
+        showAlert('Erro ao processar pedido', 'error');
+    }
 }
 
         showAlert('Erro ao impulsionar grupo', 'error');
