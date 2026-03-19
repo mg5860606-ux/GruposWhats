@@ -702,8 +702,8 @@ function openMyGroupsModal() {
                     </div>
                     <div class="my-group-actions-row">
                         ${!grupo.vip ? `
-                            <button class="btn-boost-instant" onclick="impulsionarGratis('${grupo.id}')" data-testid="boost-free-btn-${grupo.id}">
-                                <i class="fas fa-rocket"></i> Impulsionamento Instantâneo
+                            <button class="btn-boost-free" onclick="impulsionarGratis('${grupo.id}')" data-testid="boost-free-btn-${grupo.id}">
+                                <i class="fas fa-gift"></i> Impulsionamento Grátis
                             </button>
                             <button class="btn-super-vip" onclick="openBoostModalForGroup('${grupo.id}')" data-testid="boost-vip-btn-${grupo.id}">
                                 <i class="fas fa-star"></i> SUPER VIP
@@ -1233,4 +1233,249 @@ function showAlert(message, type) {
     setTimeout(() => {
         alert.remove();
     }, 3500);
+}
+
+
+// ===== MODAL VIP =====
+let grupoAtualVIP = null;
+let cupomAplicado = null;
+const PLANOS = {
+    12: { preco: 4.95, nome: '12 Horas' },
+    24: { preco: 9.90, nome: '24 Horas' },
+    72: { preco: 29.70, nome: '3 Dias' },
+    168: { preco: 69.30, nome: '7 Dias' }
+};
+
+// Inicializar SDK Mercado Pago
+const mp = new MercadoPago('APP_USR-756df5b8-3e62-4160-b469-9f2969dae8a6', {
+    locale: 'pt-BR'
+});
+
+function openBoostModalForGroup(grupoId) {
+    grupoAtualVIP = grupoId;
+    document.getElementById('modalVIP').style.display = 'flex';
+    
+    // Buscar nome do grupo
+    fetch(`/api/groups/${grupoId}`)
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                document.getElementById('grupo-nome-vip').textContent = `Impulsionar: ${data.group.nome}`;
+            }
+        });
+    
+    // Listener para mudar plano
+    document.querySelectorAll('input[name="plano"]').forEach(radio => {
+        radio.addEventListener('change', atualizarTotal);
+    });
+}
+
+function fecharModalVIP() {
+    document.getElementById('modalVIP').style.display = 'none';
+    document.getElementById('area-pix').style.display = 'none';
+    document.getElementById('area-cartao').style.display = 'none';
+    document.querySelector('.metodos-pagamento').style.display = 'flex';
+    cupomAplicado = null;
+    document.getElementById('codigo-cupom-vip').value = '';
+    document.getElementById('cupom-status').innerHTML = '';
+    atualizarTotal();
+}
+
+function atualizarTotal() {
+    const planoSelecionado = document.querySelector('input[name="plano"]:checked').value;
+    let preco = PLANOS[planoSelecionado].preco;
+    
+    // Aplicar desconto do cupom
+    if (cupomAplicado) {
+        if (cupomAplicado.tipo === 'percentual') {
+            preco = preco * (1 - cupomAplicado.desconto / 100);
+        } else {
+            preco = preco - cupomAplicado.desconto;
+        }
+        preco = Math.max(preco, 0.50);
+    }
+    
+    document.getElementById('valor-total-vip').textContent = preco.toFixed(2);
+}
+
+async function aplicarCupomVIP() {
+    const codigo = document.getElementById('codigo-cupom-vip').value.trim();
+    if (!codigo) {
+        showAlert('Digite um código de cupom', 'warning');
+        return;
+    }
+    
+    try {
+        const response = await fetch('/api/coupons/validate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ codigo })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            cupomAplicado = data.cupom;
+            document.getElementById('cupom-status').innerHTML = `<span style="color: green;">✅ Cupom aplicado: ${data.cupom.desconto}${data.cupom.tipo === 'percentual' ? '%' : 'R$'} de desconto</span>`;
+            atualizarTotal();
+            showAlert('Cupom aplicado com sucesso!', 'success');
+        } else {
+            document.getElementById('cupom-status').innerHTML = `<span style="color: red;">❌ ${data.error}</span>`;
+            showAlert(data.error, 'error');
+        }
+    } catch (error) {
+        showAlert('Erro ao validar cupom', 'error');
+    }
+}
+
+// ===== PAGAMENTO PIX =====
+async function iniciarPagamentoPix() {
+    const planoSelecionado = document.querySelector('input[name="plano"]:checked').value;
+    const codigoCupom = cupomAplicado ? cupomAplicado.codigo : null;
+    
+    // Pedir dados do usuário
+    const nome = prompt('Seu nome completo:');
+    if (!nome) return;
+    
+    const cpf = prompt('Seu CPF (somente números):');
+    if (!cpf) return;
+    
+    const email = prompt('Seu e-mail:');
+    if (!email) return;
+    
+    try {
+        showAlert('Gerando PIX...', 'info');
+        
+        const response = await fetch('/api/payment/create-pix', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                groupId: grupoAtualVIP,
+                planoHoras: parseInt(planoSelecionado),
+                nome,
+                cpf: cpf.replace(/\D/g, ''),
+                email,
+                codigoCupom
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            // Mostrar QR Code
+            document.getElementById('qr-code-img').src = `data:image/png;base64,${data.qrCodeBase64}`;
+            document.getElementById('qr-code-text').value = data.qrCode;
+            document.getElementById('area-pix').style.display = 'block';
+            document.querySelector('.metodos-pagamento').style.display = 'none';
+            
+            showAlert('PIX gerado! Escaneie o QR Code', 'success');
+            
+            // Iniciar verificação de pagamento
+            verificarPagamentoPix(data.paymentId);
+        } else {
+            showAlert('Erro ao gerar PIX: ' + data.error, 'error');
+        }
+    } catch (error) {
+        showAlert('Erro ao gerar PIX', 'error');
+    }
+}
+
+function copiarCodigoPix() {
+    const codigo = document.getElementById('qr-code-text').value;
+    navigator.clipboard.writeText(codigo);
+    showAlert('Código PIX copiado!', 'success');
+}
+
+function verificarPagamentoPix(paymentId) {
+    const interval = setInterval(async () => {
+        try {
+            const response = await fetch(`/api/payment/status/${paymentId}`);
+            const data = await response.json();
+            
+            if (data.status === 'approved') {
+                clearInterval(interval);
+                showAlert('✅ Pagamento aprovado! VIP ativado!', 'success');
+                setTimeout(() => {
+                    fecharModalVIP();
+                    loadMyGroupsPage();
+                }, 2000);
+            } else if (data.status === 'rejected' || data.status === 'cancelled') {
+                clearInterval(interval);
+                showAlert('❌ Pagamento não aprovado', 'error');
+            }
+        } catch (error) {
+            console.error('Erro ao verificar pagamento:', error);
+        }
+    }, 3000); // Verifica a cada 3 segundos
+}
+
+// ===== PAGAMENTO CARTÃO =====
+async function iniciarPagamentoCartao() {
+    document.getElementById('area-cartao').style.display = 'block';
+    document.querySelector('.metodos-pagamento').style.display = 'none';
+}
+
+async function processarPagamentoCartao() {
+    const planoSelecionado = document.querySelector('input[name="plano"]:checked').value;
+    const codigoCupom = cupomAplicado ? cupomAplicado.codigo : null;
+    
+    // Pegar dados do formulário
+    const cardNumber = document.getElementById('card-number').value.replace(/\s/g, '');
+    const cardExpiry = document.getElementById('card-expiry').value;
+    const cardCvv = document.getElementById('card-cvv').value;
+    const cardName = document.getElementById('card-name').value;
+    const cardCpf = document.getElementById('card-cpf').value.replace(/\D/g, '');
+    
+    if (!cardNumber || !cardExpiry || !cardCvv || !cardName || !cardCpf) {
+        showAlert('Preencha todos os dados do cartão', 'error');
+        return;
+    }
+    
+    try {
+        showAlert('Processando pagamento...', 'info');
+        
+        // Separar mês e ano
+        const [mes, ano] = cardExpiry.split('/');
+        
+        // Criar token do cartão
+        const token = await mp.fields.createCardToken({
+            cardNumber,
+            cardholderName: cardName,
+            cardExpirationMonth: mes,
+            cardExpirationYear: `20${ano}`,
+            securityCode: cardCvv,
+            identificationType: 'CPF',
+            identificationNumber: cardCpf
+        });
+        
+        // Enviar para backend
+        const response = await fetch('/api/payment/create-card', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                groupId: grupoAtualVIP,
+                planoHoras: parseInt(planoSelecionado),
+                nome: cardName,
+                cpf: cardCpf,
+                email: 'email@exemplo.com',
+                token: token.id,
+                installments: 1,
+                codigoCupom
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success && data.status === 'approved') {
+            showAlert('✅ Pagamento aprovado! VIP ativado!', 'success');
+            setTimeout(() => {
+                fecharModalVIP();
+                loadMyGroupsPage();
+            }, 2000);
+        } else {
+            showAlert('❌ Pagamento não aprovado: ' + (data.statusDetail || data.error), 'error');
+        }
+    } catch (error) {
+        showAlert('Erro ao processar cartão: ' + error.message, 'error');
+    }
 }

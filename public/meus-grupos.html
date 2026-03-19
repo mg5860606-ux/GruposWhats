@@ -3,9 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meus Grupos - GruposWhats.app</title>
+    <title>Meus Grupos - GruposWhats.app | Gerencie seus Grupos de WhatsApp</title>
+    <meta name="description" content="Gerencie seus grupos de WhatsApp, impulsione gratuitamente ou torne VIP. Aumente a visibilidade e atraia milhares de membros!">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="Meus Grupos - GruposWhats.app">
+    <meta property="og:description" content="Gerencie seus grupos de WhatsApp e impulsione gratuitamente!">
+    <meta property="og:image" content="https://files.catbox.moe/e697zf.jpg">
+    <meta property="og:url" content="https://gruposwhats-site.onrender.com/meus-grupos.html">
+    
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Mercado Pago SDK -->
+    <script src="https://sdk.mercadopago.com/js/v2"></script>
 </head>
 <body>
     <!-- Header -->
@@ -202,5 +212,312 @@
         // Carregar ao abrir a página
         document.addEventListener('DOMContentLoaded', loadMyGroupsPage);
     </script>
+
+    <!-- Modal VIP -->
+    <div id="modalVIP" class="modal-vip" style="display:none;">
+        <div class="modal-vip-content">
+            <span class="close-modal" onclick="fecharModalVIP()">&times;</span>
+            
+            <h2 style="text-align: center; margin-bottom: 10px;">🌟 Impulsionar Grupo VIP</h2>
+            <p id="grupo-nome-vip" style="text-align: center; color: #666; margin-bottom: 30px;"></p>
+
+            <!-- Seleção de Plano -->
+            <div class="planos-vip">
+                <label class="plano-card">
+                    <input type="radio" name="plano" value="12" checked>
+                    <div class="plano-info">
+                        <h3>12 Horas</h3>
+                        <p class="plano-desc">Padrão</p>
+                        <p class="plano-preco">R$ 4,95</p>
+                    </div>
+                </label>
+
+                <label class="plano-card">
+                    <input type="radio" name="plano" value="24">
+                    <div class="plano-info">
+                        <h3>24 Horas</h3>
+                        <p class="plano-desc">Dobro</p>
+                        <p class="plano-preco">R$ 9,90</p>
+                    </div>
+                </label>
+
+                <label class="plano-card">
+                    <input type="radio" name="plano" value="72">
+                    <div class="plano-info">
+                        <h3>3 Dias</h3>
+                        <p class="plano-desc">Fim de Semana</p>
+                        <p class="plano-preco">R$ 29,70</p>
+                    </div>
+                </label>
+
+                <label class="plano-card">
+                    <input type="radio" name="plano" value="168">
+                    <div class="plano-info">
+                        <h3>7 Dias</h3>
+                        <p class="plano-desc">Semana Completa</p>
+                        <p class="plano-preco">R$ 69,30</p>
+                    </div>
+                </label>
+            </div>
+
+            <!-- Campo Cupom -->
+            <div class="cupom-container">
+                <input type="text" id="codigo-cupom-vip" placeholder="Código do cupom (opcional)">
+                <button onclick="aplicarCupomVIP()">Aplicar</button>
+            </div>
+            <div id="cupom-status" style="margin-top: 5px; text-align: center;"></div>
+
+            <!-- Total -->
+            <div class="total-vip">
+                <h3>Total: R$ <span id="valor-total-vip">4,95</span></h3>
+            </div>
+
+            <!-- Métodos de Pagamento -->
+            <div class="metodos-pagamento">
+                <button onclick="iniciarPagamentoPix()" class="btn-pix">
+                    <i class="fab fa-pix"></i> Pagar com PIX
+                </button>
+                <button onclick="iniciarPagamentoCartao()" class="btn-cartao">
+                    <i class="fas fa-credit-card"></i> Pagar com Cartão
+                </button>
+            </div>
+
+            <!-- Área PIX -->
+            <div id="area-pix" style="display:none;">
+                <h3 style="text-align: center;">Pagamento via PIX</h3>
+                <div class="pix-container">
+                    <img id="qr-code-img" alt="QR Code PIX" style="width: 250px; height: 250px; margin: 20px auto; display: block;">
+                    <p style="text-align: center;">Escaneie o QR Code com seu app de banco</p>
+                    <p style="text-align: center;">Ou copie o código abaixo:</p>
+                    <textarea id="qr-code-text" readonly style="width: 100%; height: 80px; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 12px;"></textarea>
+                    <button onclick="copiarCodigoPix()" style="width: 100%; padding: 12px; background: #25D366; color: white; border: none; border-radius: 5px; cursor: pointer; margin-top: 10px; font-weight: bold;">📋 Copiar Código PIX</button>
+                    <p class="aguardando-pagamento" style="text-align: center;">⏳ Aguardando pagamento...</p>
+                </div>
+            </div>
+
+            <!-- Área Cartão -->
+            <div id="area-cartao" style="display:none;">
+                <h3 style="text-align: center;">Pagamento via Cartão</h3>
+                <form id="form-cartao-vip" style="margin-top: 20px;">
+                    <input type="text" id="card-number" placeholder="Número do cartão" maxlength="19" style="width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px;">
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" id="card-expiry" placeholder="MM/AA" maxlength="5" style="width: 50%; padding: 12px; border: 1px solid #ddd; border-radius: 5px;">
+                        <input type="text" id="card-cvv" placeholder="CVV" maxlength="4" style="width: 50%; padding: 12px; border: 1px solid #ddd; border-radius: 5px;">
+                    </div>
+                    <input type="text" id="card-name" placeholder="Nome no cartão" style="width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px;">
+                    <input type="text" id="card-cpf" placeholder="CPF do titular" maxlength="14" style="width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px;">
+                    <button type="button" onclick="processarPagamentoCartao()" style="width: 100%; padding: 15px; background: #FF6B00; color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 15px;">💳 Pagar Agora</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <style>
+    /* Modal VIP */
+    .modal-vip {
+        display: none;
+        position: fixed;
+        z-index: 10000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7);
+        align-items: center;
+        justify-content: center;
+        overflow-y: auto;
+    }
+
+    .modal-vip-content {
+        background-color: white;
+        padding: 30px;
+        border-radius: 15px;
+        max-width: 600px;
+        width: 90%;
+        max-height: 90vh;
+        overflow-y: auto;
+        position: relative;
+        margin: 20px auto;
+    }
+
+    .close-modal {
+        position: absolute;
+        right: 20px;
+        top: 20px;
+        font-size: 30px;
+        cursor: pointer;
+        color: #666;
+    }
+
+    .close-modal:hover {
+        color: #000;
+    }
+
+    .planos-vip {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        margin: 20px 0;
+    }
+
+    .plano-card {
+        border: 2px solid #ddd;
+        border-radius: 10px;
+        padding: 15px;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: block;
+    }
+
+    .plano-card:hover {
+        border-color: #25D366;
+        transform: translateY(-2px);
+    }
+
+    .plano-card input[type="radio"] {
+        display: none;
+    }
+
+    .plano-card input[type="radio"]:checked + .plano-info {
+        background-color: #E8F5E9;
+        padding: 10px;
+        border-radius: 8px;
+    }
+
+    .plano-info {
+        text-align: center;
+        transition: all 0.3s;
+    }
+
+    .plano-info h3 {
+        margin: 0 0 5px 0;
+        font-size: 18px;
+        color: #1e293b;
+    }
+
+    .plano-desc {
+        color: #666;
+        margin: 5px 0;
+        font-size: 14px;
+    }
+
+    .plano-preco {
+        font-size: 20px;
+        font-weight: bold;
+        color: #25D366;
+        margin: 10px 0 0 0;
+    }
+
+    .cupom-container {
+        display: flex;
+        gap: 10px;
+        margin: 20px 0;
+    }
+
+    .cupom-container input {
+        flex: 1;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 14px;
+    }
+
+    .cupom-container button {
+        padding: 12px 20px;
+        background: #25D366;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: all 0.3s;
+    }
+
+    .cupom-container button:hover {
+        background: #1ea952;
+    }
+
+    .total-vip {
+        text-align: center;
+        margin: 20px 0;
+        padding: 20px;
+        background: #f5f5f5;
+        border-radius: 10px;
+    }
+
+    .total-vip h3 {
+        margin: 0;
+        font-size: 24px;
+        color: #1e293b;
+    }
+
+    .metodos-pagamento {
+        display: flex;
+        gap: 15px;
+        margin-top: 20px;
+    }
+
+    .btn-pix, .btn-cartao {
+        flex: 1;
+        padding: 15px;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .btn-pix {
+        background: #32BCAD;
+        color: white;
+    }
+
+    .btn-pix:hover {
+        background: #2a9d8f;
+        transform: translateY(-2px);
+    }
+
+    .btn-cartao {
+        background: #FF6B00;
+        color: white;
+    }
+
+    .btn-cartao:hover {
+        background: #e65100;
+        transform: translateY(-2px);
+    }
+
+    .aguardando-pagamento {
+        margin-top: 15px;
+        font-weight: bold;
+        color: #FF9800;
+        animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+    }
+
+    @media (max-width: 768px) {
+        .planos-vip {
+            grid-template-columns: 1fr;
+        }
+        
+        .metodos-pagamento {
+            flex-direction: column;
+        }
+        
+        .modal-vip-content {
+            padding: 20px;
+            width: 95%;
+        }
+    }
+    </style>
 </body>
 </html>

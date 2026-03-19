@@ -10,10 +10,10 @@ const paymentClient = new Payment(client);
 
 // Tabela de preços dos planos (BACKEND - fonte de verdade)
 const PLANOS_VIP = {
-  12: { horas: 12, preco: 9.90, nome: '12 Horas', descricao: 'Padrão' },
-  24: { horas: 24, preco: 19.80, nome: '24 Horas', descricao: 'Dobro' },
-  72: { horas: 72, preco: 59.40, nome: '3 Dias', descricao: 'Fim de Semana' },
-  168: { horas: 168, preco: 138.60, nome: '7 Dias', descricao: 'Semana Completa' }
+  12: { horas: 12, preco: 4.95, nome: '12 Horas', descricao: 'Padrão' },
+  24: { horas: 24, preco: 9.90, nome: '24 Horas', descricao: 'Dobro' },
+  72: { horas: 72, preco: 29.70, nome: '3 Dias', descricao: 'Fim de Semana' },
+  168: { horas: 168, preco: 69.30, nome: '7 Dias', descricao: 'Semana Completa' }
 };
 
 /**
