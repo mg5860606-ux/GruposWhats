@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO Meta Tags -->
+    <title>Grupos de WhatsApp 2026 - Encontre os Melhores Grupos para Entrar | GruposWhats</title>
+    <meta name="description" content="Descubra os melhores grupos de WhatsApp para entrar em 2026. Grupos de amizade, namoro, anime, jogos, tecnologia e muito mais. Entre agora e faça novas conexoes!">
+    <meta name="keywords" content="grupos de whatsapp, grupos whatsapp brasil, grupos de amizade whatsapp, grupos de namoro whatsapp, grupos de anime whatsapp, grupos whatsapp 2026, link grupo whatsapp, entrar grupo whatsapp">
+    <meta name="robots" content="index, follow">
+    <meta name="author" content="GruposWhats.app">
+    <link rel="canonical" href="https://gruposwhats.app/">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://gruposwhats.app/">
+    <meta property="og:title" content="Grupos de WhatsApp 2026 - Encontre os Melhores Grupos">
+    <meta property="og:description" content="Descubra milhares de grupos de WhatsApp para entrar. Amizade, namoro, jogos, anime e muito mais!">
+    <meta property="og:image" content="https://files.catbox.moe/e697zf.jpg">
+    <meta property="twitter:image" content="https://files.catbox.moe/e697zf.jpg">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://gruposwhats.app/">
+    <meta property="twitter:title" content="Grupos de WhatsApp 2026 - GruposWhats">
+    <meta property="twitter:description" content="Descubra milhares de grupos de WhatsApp para entrar!">
+    
+    <!-- Schema.org JSON-LD -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "GruposWhats",
+        "url": "https://gruposwhats.app/",
+        "description": "Diretorio de grupos de WhatsApp do Brasil",
+        "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://gruposwhats.app/?busca={search_term_string}",
+            "query-input": "required name=search_term_string"
+        }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        "name": "Grupos de WhatsApp Populares",
+        "description": "Lista dos grupos de WhatsApp mais populares do Brasil",
+        "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "Grupos de Amizade"},
+            {"@type": "ListItem", "position": 2, "name": "Grupos de Namoro"},
+            {"@type": "ListItem", "position": 3, "name": "Grupos de Anime"},
+            {"@type": "ListItem", "position": 4, "name": "Grupos de Games"},
+            {"@type": "ListItem", "position": 5, "name": "Grupos de Tecnologia"}
+        ]
+    }
+    </script>
+    
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+</head>
+<body data-theme="light">
+    <!-- Header -->
+    <header class="header">
+        <div class="container-fluid">
+            <div class="header-top">
+                <div class="logo" data-testid="logo" onclick="window.location.reload()">
+                    <div class="logo-icon">
+                        <i class="fab fa-whatsapp"></i>
+                    </div>
+                    <div class="logo-text">
+                        <span>GRUPOS<strong>WHATS</strong></span>
+                        <small>.app</small>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <button class="btn-theme-toggle" onclick="toggleTheme()" data-testid="theme-toggle" title="Alternar modo escuro">
+                        <i class="fas fa-moon" id="themeIcon"></i>
+                    </button>
+                    <button class="btn-header btn-enviar" onclick="window.location.href='/enviar-grupo.html'" data-testid="enviar-grupo-btn">
+                        <i class="fas fa-paper-plane"></i>
+                        <span>ENVIAR GRUPO</span>
+                    </button>
+                    <button class="btn-header btn-meus" onclick="window.location.href='/meus-grupos.html'" data-testid="meus-grupos-btn">
+                        <i class="fas fa-users"></i>
+                        <span>MEUS GRUPOS</span>
+                    </button>
+                    <button class="menu-toggle" onclick="toggleMenu()" data-testid="menu-toggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="header-bottom">
+                <div class="search-container-full">
+                    <input type="text" class="search-input-full" placeholder="Buscar um grupo..." id="searchInput" onkeyup="searchGroups()" data-testid="search-input">
+                    <button class="btn-search" onclick="searchGroups()">Buscar</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sidebar Menu -->
+    <aside class="sidebar" id="sidebar">
+        <button class="close-sidebar" onclick="toggleMenu()">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="sidebar-header">
+            <div class="sidebar-logo">
+                <i class="fab fa-whatsapp"></i>
+                <span>MENU</span>
+            </div>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="#" onclick="closeMenu()" data-testid="sidebar-home"><i class="fas fa-home"></i> Início</a>
+            <a href="#" onclick="openAddGroupModal(); closeMenu()" data-testid="sidebar-enviar"><i class="fas fa-paper-plane"></i> Enviar Grupo</a>
+            <a href="#" onclick="openMyGroupsModal(); closeMenu()" data-testid="sidebar-meus"><i class="fas fa-users"></i> Meus Grupos</a>
+            <a href="/vip" data-testid="sidebar-vip"><i class="fas fa-star"></i> Pacotes VIP</a>
+            <a href="#" onclick="openStoreModal(); closeMenu()" data-testid="sidebar-store"><i class="fas fa-rocket"></i> Loja de Cupons</a>
+            <a href="#" onclick="openAdminPanel(); closeMenu()" data-testid="sidebar-admin"><i class="fas fa-crown"></i> Painel Admin</a>
+            <div class="sidebar-divider"></div>
+            <div class="sidebar-theme-toggle">
+                <span>Modo Escuro</span>
+                <label class="switch">
+                    <input type="checkbox" id="sidebarThemeToggle" onchange="toggleTheme()">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+            <div class="sidebar-divider"></div>
+            <a href="#categorias"><i class="fas fa-th-large"></i> Categorias</a>
+            <a href="#" onclick="filterByCategory('amizade'); closeMenu()"><i class="fas fa-heart"></i> Grupos de Amizade</a>
+            <a href="#" onclick="filterByCategory('amor-romance'); closeMenu()"><i class="fas fa-heart"></i> Grupos de Namoro</a>
+            <a href="#" onclick="filterByCategory('games'); closeMenu()"><i class="fas fa-gamepad"></i> Grupos de Games</a>
+            <a href="#" onclick="filterByCategory('anime'); closeMenu()"><i class="fas fa-film"></i> Grupos de Anime</a>
+            <a href="#" onclick="filterByCategory('tecnologia'); closeMenu()"><i class="fas fa-laptop"></i> Tecnologia</a>
+            <a href="#grupos-em-alta"><i class="fas fa-fire"></i> Grupos em Alta</a>
+            <a href="#recentes"><i class="fas fa-clock"></i> Grupos Recentes</a>
+        </nav>
+    </aside>
+
+    <!-- Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMenu()"></div>
+
+
+    <!-- Categorias -->
+    <section class="categories-section" id="categorias">
+        <div class="container-fluid">
+            <h2 class="section-title-small">Categorias Populares</h2>
+            <div class="categories-wrapper">
+                <button class="category-card active" data-category="todos" onclick="filterByCategory('todos')" data-testid="cat-todos">
+                    <div class="category-icon"><i class="fas fa-globe"></i></div>
+                    <span>Todos</span>
+                </button>
+                <button class="category-card" data-category="amizade" onclick="filterByCategory('amizade')" data-testid="cat-amizade">
+                    <div class="category-icon"><i class="fas fa-heart"></i></div>
+                    <span>Amizade</span>
+                </button>
+                <button class="category-card" data-category="amor-romance" onclick="filterByCategory('amor-romance')" data-testid="cat-namoro">
+                    <div class="category-icon"><i class="fas fa-kiss-wink-heart"></i></div>
+                    <span>Namoro</span>
+                </button>
+                <button class="category-card" data-category="anime" onclick="filterByCategory('anime')" data-testid="cat-anime">
+                    <div class="category-icon"><i class="fas fa-dragon"></i></div>
+                    <span>Anime</span>
+                </button>
+                <button class="category-card" data-category="games" onclick="filterByCategory('games')" data-testid="cat-games">
+                    <div class="category-icon"><i class="fas fa-gamepad"></i></div>
+                    <span>Games</span>
+                </button>
+                <button class="category-card" data-category="tecnologia" onclick="filterByCategory('tecnologia')" data-testid="cat-tech">
+                    <div class="category-icon"><i class="fas fa-laptop-code"></i></div>
+                    <span>Tecnologia</span>
+                </button>
+                <button class="category-card" data-category="memes" onclick="filterByCategory('memes')" data-testid="cat-memes">
+                    <div class="category-icon"><i class="fas fa-laugh-squint"></i></div>
+                    <span>Memes</span>
+                </button>
+                <button class="category-card" data-category="musica" onclick="filterByCategory('musica')" data-testid="cat-musica">
+                    <div class="category-icon"><i class="fas fa-music"></i></div>
+                    <span>Musica</span>
+                </button>
+                <button class="category-card" data-category="cripto" onclick="filterByCategory('cripto')" data-testid="cat-cripto">
+                    <div class="category-icon"><i class="fab fa-bitcoin"></i></div>
+                    <span>Cripto</span>
+                </button>
+                <button class="category-card" data-category="educacao" onclick="filterByCategory('educacao')" data-testid="cat-educacao">
+                    <div class="category-icon"><i class="fas fa-graduation-cap"></i></div>
+                    <span>Educacao</span>
+                </button>
+                <button class="category-card" data-category="compra-venda" onclick="filterByCategory('compra-venda')" data-testid="cat-compras">
+                    <div class="category-icon"><i class="fas fa-shopping-cart"></i></div>
+                    <span>Compras</span>
+                </button>
+                <button class="category-card" data-category="outros" onclick="filterByCategory('outros')" data-testid="cat-outros">
+                    <div class="category-icon"><i class="fas fa-ellipsis-h"></i></div>
+                    <span>Outros</span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Título Principal dos Grupos -->
+    <section class="main-title-section">
+        <div class="container-fluid">
+            <h1 class="main-title">Grupos de WhatsApp</h1>
+            <p class="main-subtitle">Encontre e participe dos melhores grupos</p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container-fluid">
+            <!-- Grupos em Alta (VIP) -->
+            <section class="trending-section" id="grupos-em-alta">
+                <div class="section-header-row">
+                    <h2 class="section-title"><i class="fas fa-fire"></i> Grupos em Alta</h2>
+                    <span class="badge-vip">VIP</span>
+                </div>
+                <div class="trending-grid" id="trendingGrid"></div>
+            </section>
+
+            <!-- Ranking -->
+            <section class="ranking-section" id="rankingSection" style="display: none;">
+                <h2 class="ranking-title"><i class="fas fa-trophy"></i> Grupos Mais Acessados</h2>
+                <div class="ranking-grid" id="rankingGrid"></div>
+            </section>
+            
+            <!-- Todos os Grupos -->
+            <section id="recentes">
+                <h2 class="section-title"><i class="fas fa-layer-group"></i> Todos os Grupos</h2>
+                <div class="groups-grid" id="groupsGrid"></div>
+                
+                <!-- Paginação -->
+                <div id="paginationContainer" class="pagination-container"></div>
+                
+                <div class="no-results" id="noResults" style="display: none;">
+                    <i class="fas fa-search"></i>
+                    <p>Nenhum grupo encontrado</p>
+                    <button class="btn-add-first" onclick="openAddGroupModal()">Adicionar primeiro grupo</button>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Modal Adicionar Grupo -->
+    <div class="modal" id="addGroupModal">
+        <div class="modal-content modal-modern">
+            <div class="modal-header">
+                <h2><i class="fas fa-plus-circle"></i> Adicionar Novo Grupo</h2>
+                <button class="close-modal" onclick="closeAddGroupModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="addGroupForm" onsubmit="addGroup(event)">
+                    <div class="form-row-2">
+                        <div class="form-group">
+                            <label>Nome do Grupo *</label>
+                            <input type="text" id="groupName" required placeholder="Ex: Amigos da Faculdade">
+                        </div>
+                        <div class="form-group">
+                            <label>Categoria *</label>
+                            <select id="groupCategory" required>
+                                <option value="">Selecione...</option>
+                                <option value="amizade">Amizade</option>
+                                <option value="amor-romance">Namoro / Romance</option>
+                                <option value="anime">Anime / Manga</option>
+                                <option value="games">Games / Jogos</option>
+                                <option value="tecnologia">Tecnologia</option>
+                                <option value="memes">Memes / Humor</option>
+                                <option value="musica">Musica</option>
+                                <option value="cripto">Criptomoedas</option>
+                                <option value="educacao">Educacao</option>
+                                <option value="compra-venda">Compra e Venda</option>
+                                <option value="outros">Outros</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Descricao *</label>
+                        <textarea id="groupDesc" required placeholder="Descreva sobre o que e o grupo..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Link do Grupo WhatsApp *</label>
+                        <input type="url" id="groupLink" required placeholder="https://chat.whatsapp.com/...">
+                    </div>
+                    <div class="form-group">
+                        <label>Foto do Grupo *</label>
+                        <input type="file" id="groupImage" required accept="image/*" onchange="previewImage(this)">
+                        <small>✅ Aceita qualquer tamanho e formato de imagem (JPG, PNG, GIF, WebP, BMP)</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Tags (separadas por virgula)</label>
+                        <input type="text" id="groupTags" placeholder="amizade, brasil, chat">
+                    </div>
+                    <div class="rules-section">
+                        <h4 style="margin-bottom: 12px; font-size: 15px; color: var(--text-primary);">
+                            <i class="fas fa-shield-alt"></i> Declaro que meu grupo segue as regras: *
+                        </h4>
+                        <div class="form-group-checkbox">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="rule1" required>
+                                <span class="checkmark"></span>
+                                <span class="checkbox-label">✅ Proibido conteúdo adulto</span>
+                            </label>
+                        </div>
+                        <div class="form-group-checkbox">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="rule2" required>
+                                <span class="checkmark"></span>
+                                <span class="checkbox-label">✅ Proibido conteúdo agressivo</span>
+                            </label>
+                        </div>
+                        <div class="form-group-checkbox">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="rule3" required>
+                                <span class="checkmark"></span>
+                                <span class="checkbox-label">✅ Proibido uso de palavrões</span>
+                            </label>
+                        </div>
+                        <div class="form-group-checkbox">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="rule4" required>
+                                <span class="checkmark"></span>
+                                <span class="checkbox-label">✅ Proibido trava zap</span>
+                            </label>
+                        </div>
+                        <div class="form-group-checkbox">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="rule5" required>
+                                <span class="checkmark"></span>
+                                <span class="checkbox-label">✅ Proibido menor idade</span>
+                            </label>
+                        </div>
+                        <div class="form-group-checkbox">
+                            <label class="checkbox-container">
+                                <input type="checkbox" id="rule6" required>
+                                <span class="checkmark"></span>
+                                <span class="checkbox-label">✅ Proibido enviar links</span>
+                            </label>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-submit" data-testid="submit-add-group">
+                        <i class="fas fa-check"></i> Enviar Grupo para Aprovação
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Meus Grupos -->
+    <div class="modal" id="myGroupsModal">
+        <div class="modal-content modal-modern">
+            <div class="modal-header">
+                <h2><i class="fas fa-users"></i> Meus Grupos</h2>
+                <button class="close-modal" onclick="closeMyGroupsModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="info-box">
+                    <i class="fas fa-info-circle"></i>
+                    <p>💾 Seus grupos ficam salvos neste dispositivo para sua segurança e privacidade. Acesse sempre do mesmo navegador para gerenciá-los facilmente.</p>
+                </div>
+                <div id="myGroupsList"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Impulsionamento -->
+    <div class="modal" id="boostModal">
+        <div class="modal-content modal-modern modal-wide">
+            <div class="modal-header">
+                <h2><i class="fas fa-rocket"></i> Impulsionar Grupo</h2>
+                <button class="close-modal" onclick="closeBoostModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="boost-hero">
+                    <div class="boost-icon-big"><i class="fas fa-rocket"></i></div>
+                    <h3>Impulsione seu Grupo!</h3>
+                    <p>Escolha a duração e a forma de pagamento.</p>
+                </div>
+                <form id="boostForm" onsubmit="processBoost(event)">
+                    <input type="hidden" id="boostGroupId">
+                    <div class="form-row-2">
+                        <div class="form-group">
+                            <label>Nome Completo *</label>
+                            <input type="text" id="boostNome" required placeholder="Seu nome completo">
+                        </div>
+                        <div class="form-group">
+                            <label>CPF *</label>
+                            <input type="text" id="boostCpf" required placeholder="000.000.000-00" maxlength="14">
+                        </div>
+                    </div>
+                    <div class="form-row-2">
+                        <div class="form-group">
+                            <label>Email *</label>
+                            <input type="email" id="boostEmail" required placeholder="seu@email.com">
+                        </div>
+                        <div class="form-group">
+                            <label>Telefone/WhatsApp *</label>
+                            <input type="tel" id="boostTelefone" required placeholder="(00) 00000-0000" maxlength="15">
+                        </div>
+                    </div>
+                    <h3 style="margin: 24px 0 16px; font-size: 18px;">Escolha a duração do destaque:</h3>
+                    <div class="packages-grid">
+                        <div class="package-card" data-hours="12" onclick="selectBoostPackage(12, 4.95)">
+                            <div class="package-badge">Padrão</div>
+                            <h3>12 Horas</h3>
+                            <div class="package-price">R$ 4,95</div>
+                            <ul class="package-features">
+                                <li><i class="fas fa-check"></i> Destaque VIP</li>
+                                <li><i class="fas fa-check"></i> Borda dourada</li>
+                                <li><i class="fas fa-check"></i> Topo da lista</li>
+                            </ul>
+                        </div>
+                        <div class="package-card featured" data-hours="24" onclick="selectBoostPackage(24, 9.90)">
+                            <div class="package-badge special">Dobro</div>
+                            <h3>24 Horas</h3>
+                            <div class="package-price">R$ 9,90</div>
+                            <ul class="package-features">
+                                <li><i class="fas fa-check"></i> Destaque VIP</li>
+                                <li><i class="fas fa-check"></i> Borda dourada</li>
+                                <li><i class="fas fa-check"></i> Topo da lista</li>
+                                <li><i class="fas fa-star"></i> Dobro de tempo</li>
+                            </ul>
+                        </div>
+                        <div class="package-card" data-hours="72" onclick="selectBoostPackage(72, 29.70)">
+                            <div class="package-badge">Fim de Semana</div>
+                            <h3>3 Dias</h3>
+                            <div class="package-price">R$ 29,70</div>
+                            <ul class="package-features">
+                                <li><i class="fas fa-check"></i> Destaque VIP</li>
+                                <li><i class="fas fa-check"></i> Borda dourada</li>
+                                <li><i class="fas fa-check"></i> Topo da lista</li>
+                                <li><i class="fas fa-star"></i> 3 dias completos</li>
+                            </ul>
+                        </div>
+                        <div class="package-card premium" data-hours="168" onclick="selectBoostPackage(168, 69.30)">
+                            <div class="package-badge premium-badge">Semana Completa</div>
+                            <h3>7 Dias</h3>
+                            <div class="package-price">R$ 69,30</div>
+                            <ul class="package-features">
+                                <li><i class="fas fa-check"></i> Destaque VIP</li>
+                                <li><i class="fas fa-check"></i> Borda dourada</li>
+                                <li><i class="fas fa-check"></i> Topo da lista</li>
+                                <li><i class="fas fa-crown"></i> Semana inteira!</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="payment-buttons">
+                        <button type="button" class="btn-payment btn-pix" onclick="payWithPix()">
+                            <i class="fas fa-qrcode"></i> Pagar com PIX
+                        </button>
+                        <button type="button" class="btn-payment btn-card" onclick="payWithCard()">
+                            <i class="fas fa-credit-card"></i> Pagar com Cartão
+                        </button>
+                    </div>
+                </form>
+                <div class="code-section" style="margin-top: 28px;">
+                    <h3><i class="fas fa-ticket-alt"></i> Usar Código</h3>
+                    <p>Tem um código de impulsionamento? Ative aqui!</p>
+                    <form id="codeFormBoost" onsubmit="activateCodeFromBoost(event)">
+                        <div class="code-form-row">
+                            <input type="text" id="boostCodeInput" required placeholder="BOOST-XXXX-XXXX" class="code-input">
+                            <button type="submit" class="btn-activate">
+                                <i class="fas fa-check"></i> Ativar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Loja/Cupons -->
+    <div class="modal" id="storeModal">
+        <div class="modal-content modal-modern modal-wide">
+            <div class="modal-header">
+                <h2><i class="fas fa-store"></i> Loja de Cupons</h2>
+                <button class="close-modal" onclick="closeStoreModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="boost-hero">
+                    <div class="boost-icon-big"><i class="fas fa-ticket-alt"></i></div>
+                    <h3>Compre Cupons de Impulsionamento</h3>
+                    <p>Adquira cupons para ativar mais tarde ou enviar para outras pessoas!</p>
+                </div>
+                <div class="packages-grid">
+                    <div class="package-card" onclick="buyCoupons(1, 12, 9.90)">
+                        <div class="package-badge">1 Cupom</div>
+                        <h3>12 Horas</h3>
+                        <div class="package-price">R$ 9,90</div>
+                    </div>
+                    <div class="package-card" onclick="buyCoupons(5, 12, 44.50)">
+                        <div class="package-badge special">5 Cupons</div>
+                        <h3>12 Horas cada</h3>
+                        <div class="package-price">R$ 44,50</div>
+                    </div>
+                    <div class="package-card" onclick="buyCoupons(10, 12, 79.00)">
+                        <div class="package-badge">10 Cupons</div>
+                        <h3>12 Horas cada</h3>
+                        <div class="package-price">R$ 79,00</div>
+                    </div>
+                    <div class="package-card premium" onclick="buyCoupons(10, 24, 149.00)">
+                        <div class="package-badge premium-badge">10 Cupons VIP</div>
+                        <h3>24 Horas cada</h3>
+                        <div class="package-price">R$ 149,00</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Detalhes do Grupo -->
+    <div class="modal" id="groupDetailModal">
+        <div class="modal-content modal-modern modal-wide">
+            <div class="modal-header">
+                <h2><i class="fab fa-whatsapp"></i> Detalhes do Grupo</h2>
+                <button class="close-modal" onclick="closeGroupDetailModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="groupDetailContent"></div>
+        </div>
+    </div>
+
+    <!-- Modal Admin -->
+    <div class="modal" id="adminModal">
+        <div class="modal-content modal-modern">
+            <div class="modal-header">
+                <h2><i class="fas fa-crown"></i> Painel Administrador</h2>
+                <button class="close-modal" onclick="closeAdminModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="adminLoginSection">
+                    <div class="admin-login-box">
+                        <i class="fas fa-lock"></i>
+                        <h3>Acesso Restrito</h3>
+                        <p>Digite a senha de administrador</p>
+                        <form onsubmit="loginAdmin(event)">
+                            <input type="password" id="adminPassword" required placeholder="Senha" class="admin-input" data-testid="admin-password-input">
+                            <button type="submit" class="btn-admin-login" data-testid="admin-login-btn">
+                                <i class="fas fa-sign-in-alt"></i> Entrar
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                <div id="adminPanelSection" style="display: none;">
+                    <div class="admin-tabs">
+                        <button class="admin-tab active" onclick="switchAdminTab('pending')" data-testid="tab-pending">Aprovar Grupos</button>
+                        <button class="admin-tab" onclick="switchAdminTab('payments')" data-testid="tab-payments">Histórico Pagamentos</button>
+                        <button class="admin-tab" onclick="switchAdminTab('codes')" data-testid="tab-codes">Gerar Cupons</button>
+                        <button class="admin-tab" onclick="switchAdminTab('manage')" data-testid="tab-manage">Gerenciar Grupos</button>
+                    </div>
+                    <div id="adminPendingTab" class="admin-tab-content">
+                        <h3><i class="fas fa-clock"></i> Grupos Pendentes de Aprovação</h3>
+                        <div id="pendingGroupsList"></div>
+                    </div>
+                    <div id="adminPaymentsTab" class="admin-tab-content" style="display: none;">
+                        <h3><i class="fas fa-money-bill-wave"></i> Histórico de Pagamentos</h3>
+                        <div id="paymentsHistoryList"></div>
+                    </div>
+                    <div id="adminCodesTab" class="admin-tab-content" style="display: none;">
+                        <h3><i class="fas fa-ticket-alt"></i> Gerador de Cupons de Impulsionamento</h3>
+                        <div class="generator-form">
+                            <div class="form-group">
+                                <label>Duracao do Impulsionamento</label>
+                                <select id="couponDuration" class="admin-select">
+                                    <option value="12">12 Horas</option>
+                                    <option value="24">24 Horas</option>
+                                    <option value="72">3 Dias (72 Horas)</option>
+                                    <option value="168">7 Dias (168 Horas)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Quantidade de Cupons</label>
+                                <input type="number" id="codeQuantity" min="1" max="100" value="5" class="admin-input">
+                            </div>
+                            <button class="btn-generate" onclick="generateCodes()" data-testid="generate-codes-btn">
+                                <i class="fas fa-magic"></i> Gerar Cupons
+                            </button>
+                        </div>
+                        <div id="generatedCodesSection" style="display: none;">
+                            <h4><i class="fas fa-check-circle"></i> Cupons Gerados</h4>
+                            <div class="codes-list" id="codesList"></div>
+                            <div style="display: flex; gap: 10px;">
+                                <button class="btn-copy-all" onclick="copyAllCodes()" data-testid="copy-codes-btn">
+                                    <i class="fas fa-copy"></i> Copiar Todos
+                                </button>
+                                <button class="btn-copy-all" onclick="sendCodesEmail()" style="background: var(--primary);">
+                                    <i class="fas fa-envelope"></i> Enviar por Email
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="adminManageTab" class="admin-tab-content" style="display: none;">
+                        <h3><i class="fas fa-cog"></i> Gerenciar Grupos</h3>
+                        <div id="adminGroupsList"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer SEO -->
+    <footer class="footer">
+        <div class="container-fluid">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <div class="footer-logo">
+                        <i class="fab fa-whatsapp"></i>
+                        <span>GRUPOS<strong>WHATS</strong>.app</span>
+                    </div>
+                    <p>O maior diretorio de grupos de WhatsApp do Brasil. Encontre e entre nos melhores grupos!</p>
+                    <p style="margin-top: 12px; font-size: 12px; color: var(--text-muted);">💡 Dica: Se limpar os dados do navegador, basta reenviar seus grupos novamente.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Categorias Populares</h4>
+                    <ul class="footer-links">
+                        <li><a href="#" onclick="filterByCategory('amizade')">Grupos de Amizade</a></li>
+                        <li><a href="#" onclick="filterByCategory('amor-romance')">Grupos de Namoro</a></li>
+                        <li><a href="#" onclick="filterByCategory('anime')">Grupos de Anime</a></li>
+                        <li><a href="#" onclick="filterByCategory('games')">Grupos de Games</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Links Uteis</h4>
+                    <ul class="footer-links">
+                        <li><a href="#" onclick="openAddGroupModal()">Adicionar Grupo</a></li>
+                        <li><a href="#" onclick="openStoreModal()">Comprar Cupons</a></li>
+                        <li><a href="#">Termos de Uso</a></li>
+                        <li><a href="#">Privacidade</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>Grupos WhatsApp 2026</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Grupos para Entrar</a></li>
+                        <li><a href="#">Grupos Brasil</a></li>
+                        <li><a href="#">Grupos de Tecnologia</a></li>
+                        <li><a href="#">Grupos de Criptomoedas</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 GruposWhats.app - Todos os direitos reservados</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

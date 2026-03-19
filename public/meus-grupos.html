@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meus Grupos - GruposWhats.app</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container-fluid">
+            <div class="header-top">
+                <div class="logo" data-testid="logo" onclick="window.location.href='/'">
+                    <div class="logo-icon">
+                        <i class="fab fa-whatsapp"></i>
+                    </div>
+                    <div class="logo-text">
+                        <span>GRUPOS<strong>WHATS</strong></span>
+                        <small>.app</small>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <button class="btn-theme-toggle" onclick="toggleTheme()" data-testid="theme-toggle" title="Alternar modo escuro">
+                        <i class="fas fa-moon" id="themeIcon"></i>
+                    </button>
+                    <button class="btn-header btn-enviar" onclick="window.location.href='/enviar-grupo.html'" data-testid="enviar-grupo-btn">
+                        <i class="fas fa-paper-plane"></i>
+                        <span>ENVIAR GRUPO</span>
+                    </button>
+                    <button class="btn-header btn-meus active" onclick="window.location.href='/meus-grupos.html'" data-testid="meus-grupos-btn">
+                        <i class="fas fa-users"></i>
+                        <span>MEUS GRUPOS</span>
+                    </button>
+                    <button class="menu-toggle" onclick="toggleMenu()" data-testid="menu-toggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="header-bottom">
+                <div class="search-container-full">
+                    <input type="text" class="search-input-full" placeholder="Buscar um grupo..." id="searchInput" data-testid="search-input">
+                    <button class="btn-search">Buscar</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Página Meus Grupos -->
+    <main class="container" style="margin-top: 30px; min-height: calc(100vh - 300px);">
+        <div class="page-header">
+            <h1><i class="fas fa-users"></i> Grupos de WhatsApp</h1>
+            <p>Gerencie todos os seus grupos cadastrados</p>
+        </div>
+
+        <!-- Loja de Cupons -->
+        <section class="cupons-section" style="margin-bottom: 30px;">
+            <h2 style="font-size: 20px; font-weight: 700; margin-bottom: 16px;">
+                <i class="fas fa-ticket-alt"></i> Loja de Cupons de Impulsionamento
+            </h2>
+            <div class="cupons-scroll">
+                <!-- Card Bronze -->
+                <div class="cupon-card cupon-bronze">
+                    <div class="cupon-badge">Bronze</div>
+                    <h3>10 impulsionamentos</h3>
+                    <div class="cupon-features">
+                        <p>💥 Destaque seus grupos e atraia milhares de novos membros! Código enviado por e-mail, sem prazo de validade.</p>
+                    </div>
+                    <div class="cupon-price">R$ 99,00</div>
+                    <button class="btn-cupon" onclick="comprarCupom('bronze', 10, 99.00)">Comprar</button>
+                </div>
+
+                <!-- Card Prata -->
+                <div class="cupon-card cupon-prata">
+                    <div class="cupon-badge">Prata</div>
+                    <h3>25 impulsionamentos</h3>
+                    <div class="cupon-features">
+                        <p>💥 Destaque seus grupos e atraia milhares de novos membros! Código enviado por e-mail, sem prazo de validade.</p>
+                        <p class="cupon-save">💰 Você economiza R$ 37,50</p>
+                    </div>
+                    <div class="cupon-price">
+                        <span class="price-old">De: R$ 247,50</span>
+                        <span class="price-new">R$ 210,38</span>
+                    </div>
+                    <button class="btn-cupon" onclick="comprarCupom('prata', 25, 210.38)">Comprar</button>
+                </div>
+
+                <!-- Card Ouro -->
+                <div class="cupon-card cupon-ouro">
+                    <div class="cupon-badge">Ouro</div>
+                    <h3>50 impulsionamentos</h3>
+                    <div class="cupon-features">
+                        <p>💥 Destaque seus grupos e atraia milhares de novos membros! Código enviado por e-mail, sem prazo de validade.</p>
+                        <p class="cupon-save">💰 Você economiza R$ 95,00</p>
+                    </div>
+                    <div class="cupon-price">
+                        <span class="price-old">De: R$ 495,00</span>
+                        <span class="price-new">R$ 400,00</span>
+                    </div>
+                    <button class="btn-cupon" onclick="comprarCupom('ouro', 50, 400.00)">Comprar</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Banner Anúncio VIP -->
+        <section class="banner-vip" style="margin-bottom: 30px;">
+            <div class="star-icon">
+                <i class="fas fa-star"></i>
+            </div>
+            <h2>Por apenas R$ 9,90 você pode tornar o seu Grupo VIP!</h2>
+            <p>Grupos VIP's recebem mais visitas e permanecem impulsionados por 12 horas em posição prioritária na listagem dos grupos.</p>
+        </section>
+
+        <h2 style="font-size: 20px; font-weight: 700; margin-bottom: 20px;">
+            <i class="fas fa-folder"></i> Meus Grupos Cadastrados
+        </h2>
+
+        <div id="meusGruposContainer" class="grupos-grid">
+            <!-- Cards dos grupos serão inseridos aqui -->
+        </div>
+
+        <div id="emptyState" class="empty-state" style="display: none;">
+            <i class="fas fa-folder-open" style="font-size: 64px; color: var(--text-secondary); margin-bottom: 20px;"></i>
+            <h3>Você ainda não adicionou nenhum grupo</h3>
+            <p>Clique em "Enviar Grupo" para adicionar seu primeiro grupo!</p>
+            <button class="btn-primary" onclick="window.location.href='/enviar-grupo.html'" style="margin-top: 20px;">
+                <i class="fas fa-plus"></i> Adicionar Grupo
+            </button>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 GruposWhats.app - Todos os direitos reservados</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+    <script>
+        // Carregar grupos do usuário
+        async function loadMyGroupsPage() {
+            const meusGruposIds = JSON.parse(localStorage.getItem('meusGrupos') || '[]');
+            const container = document.getElementById('meusGruposContainer');
+            const emptyState = document.getElementById('emptyState');
+
+            if (meusGruposIds.length === 0) {
+                emptyState.style.display = 'block';
+                return;
+            }
+
+            try {
+                const response = await apiCall('/api/groups');
+                if (response.success) {
+                    const meuGrupos = response.grupos.filter(g => meusGruposIds.includes(g.id));
+                    
+                    if (meuGrupos.length === 0) {
+                        emptyState.style.display = 'block';
+                        return;
+                    }
+
+                    container.innerHTML = meuGrupos.map(grupo => {
+                        const vipStatus = grupo.vip && grupo.vipExpira ? 
+                            `<div class="vip-status">⭐ VIP ativo - expira em ${calcularTempoRestante(grupo.vipExpira)}</div>` : '';
+                        
+                        return `
+                            <div class="my-group-card" data-testid="my-group-${grupo.id}">
+                                <div class="my-group-image">
+                                    <img src="${grupo.imagem}" alt="${grupo.nome}">
+                                    ${grupo.vip ? '<div class="vip-badge"><i class="fas fa-star"></i> VIP</div>' : ''}
+                                </div>
+                                <div class="my-group-content">
+                                    <div class="my-group-category">${getCategoryName(grupo.categoria)}</div>
+                                    <h4 class="my-group-title">${grupo.nome}</h4>
+                                    <p class="my-group-description">${grupo.descricao}</p>
+                                    ${vipStatus}
+                                </div>
+                                <div class="my-group-actions-row">
+                                    ${!grupo.vip ? `
+                                        <button class="btn-boost-instant" onclick="impulsionarGratis('${grupo.id}')" data-testid="boost-free-btn-${grupo.id}">
+                                            <i class="fas fa-rocket"></i> Impulsionamento Instantâneo
+                                        </button>
+                                        <button class="btn-super-vip" onclick="openBoostPageForGroup('${grupo.id}')" data-testid="boost-vip-btn-${grupo.id}">
+                                            <i class="fas fa-star"></i> SUPER VIP
+                                        </button>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                }
+            } catch (error) {
+                showAlert('Erro ao carregar grupos', 'error');
+            }
+        }
+
+        function openBoostPageForGroup(groupId) {
+            window.location.href = `/impulsionar.html?grupo=${groupId}`;
+        }
+
+        // Carregar ao abrir a página
+        document.addEventListener('DOMContentLoaded', loadMyGroupsPage);
+    </script>
+</body>
+</html>
